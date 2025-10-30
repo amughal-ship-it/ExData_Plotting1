@@ -29,47 +29,70 @@ hist(subset_data$Global_active_power, col="red",
 dev.off()
 
 #Plot2
-subset_data$Datetime <- strptime(paste(subset_data$Date, subset_data$Time),
-                                 "%Y-%m-%d %H:%M:%S")
+
+subset_data$Datetime <- as.POSIXct(paste(subset_data$Date, subset_data$Time),
+                                   format="%Y-%m-%d %H:%M:%S")
+
 png("plot2.png", width=480, height=480)
+
+
 plot(subset_data$Datetime, subset_data$Global_active_power, 
-     type="l", xlab="", ylab="Global Active Power (kilowatts)")
+     type="l", xlab="", ylab="Global Active Power (kilowatts)", xaxt="n")
+
+
+axis.POSIXct(1, at=seq(min(subset_data$Datetime), 
+                       max(subset_data$Datetime) + 86400, by="day"),
+             format="%a")  # %a = abbreviated weekday names (Thu, Fri, Sat)
 dev.off()
 
-#Plot3
 
+
+#Plot3
 png("plot3.png", width=480, height=480)
-plot(subset_data$Datetime, subset_data$Sub_metering_1, type="l", 
-     xlab="", ylab="Energy sub metering")
+
+plot(subset_data$Datetime, subset_data$Sub_metering_1, type="l",
+     xlab="", ylab="Energy sub metering", xaxt="n")
 lines(subset_data$Datetime, subset_data$Sub_metering_2, col="red")
 lines(subset_data$Datetime, subset_data$Sub_metering_3, col="blue")
+
+
+axis.POSIXct(1, at=seq(min(subset_data$Datetime),
+                       max(subset_data$Datetime) + 86400, by="day"),
+             format="%a")
+
 legend("topright", legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
        col=c("black", "red", "blue"), lty=1)
+
+
 dev.off()
 
 
 #Plot 4
 png("plot4.png", width=480, height=480)
+
 par(mfrow=c(2,2))
 
-# Top-left
+tick_positions <- seq(min(subset_data$Datetime),
+                      max(subset_data$Datetime) + 86400, by="day")
+
 plot(subset_data$Datetime, subset_data$Global_active_power, type="l",
-     xlab="", ylab="Global Active Power")
+     xlab="", ylab="Global Active Power", xaxt="n")
+axis.POSIXct(1, at=tick_positions, format="%a")
 
-# Top-right
 plot(subset_data$Datetime, subset_data$Voltage, type="l",
-     xlab="datetime", ylab="Voltage")
+     xlab="datetime", ylab="Voltage", xaxt="n")
+axis.POSIXct(1, at=tick_positions, format="%a")
 
-# Bottom-left
 plot(subset_data$Datetime, subset_data$Sub_metering_1, type="l",
-     xlab="", ylab="Energy sub metering")
+     xlab="", ylab="Energy sub metering", xaxt="n")
 lines(subset_data$Datetime, subset_data$Sub_metering_2, col="red")
 lines(subset_data$Datetime, subset_data$Sub_metering_3, col="blue")
+axis.POSIXct(1, at=tick_positions, format="%a")
 legend("topright", legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
        col=c("black", "red", "blue"), lty=1, bty="n")
 
-# Bottom-right
 plot(subset_data$Datetime, subset_data$Global_reactive_power, type="l",
-     xlab="datetime", ylab="Global_reactive_power")
+     xlab="datetime", ylab="Global Reactive Power", xaxt="n")
+axis.POSIXct(1, at=tick_positions, format="%a")
 
 dev.off()
